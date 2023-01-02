@@ -8,7 +8,10 @@ public class Movements : MonoBehaviour
     private float movSpeed;
     
     [SerializeField]
-    private Vector2 turnSensitivity;
+    private float turnSensitivity;
+
+    [SerializeField]
+    private GameObject cam;
 
     private new Transform camera;
 
@@ -29,13 +32,27 @@ public class Movements : MonoBehaviour
         if (Input.GetButton("WalkRight")) transform.Translate(movSpeed * Time.deltaTime, 0, 0);
         if (Input.GetButton("WalkLeft")) transform.Translate(-movSpeed * Time.deltaTime, 0, 0);
 
-        if (horizontalTwistMouse != 0) transform.Rotate(Vector3.up * horizontalTwistMouse * turnSensitivity.x);
-        if (verticalTwistMouse != 0)
+        Debug.Log(horizontalTwistMouse);
+        Debug.Log(verticalTwistMouse);
+
+        if (horizontalTwistMouse > 0 && verticalTwistMouse > 0)
         {
-            float angle = (camera.localEulerAngles.x - verticalTwistMouse * turnSensitivity.y + 360) % 360;
-            if (angle > 180) angle -= 360;
-            angle = Mathf.Clamp(angle, -80, 80);
-            camera.localEulerAngles = Vector3.right * angle;
+            cam.transform.SetParent(null);
+            transform.Rotate(new Vector3(0, horizontalTwistMouse + turnSensitivity, 0));
+            cam.transform.SetParent(transform);
         }
+        if (horizontalTwistMouse < 0 && verticalTwistMouse > 0)
+        {
+            cam.transform.SetParent(null);
+            transform.Rotate(new Vector3(0, (horizontalTwistMouse + turnSensitivity) * -1, 0));
+            cam.transform.SetParent(transform);
+        }
+        //if (verticalTwistMouse != 0)
+        //{
+        //    float angle = (camera.localEulerAngles.x - verticalTwistMouse * turnSensitivity.y + 360) % 360;
+        //    if (angle > 180) angle -= 360;
+        //    angle = Mathf.Clamp(angle, -80, 80);
+        //    camera.localEulerAngles = Vector3.right * angle;
+        //}
     }
 }
